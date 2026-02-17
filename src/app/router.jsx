@@ -3,37 +3,34 @@ import {
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
-
 import Layout from "../pages/Layout";
-import TodosPage from "../pages/TodoPage";
+import TodoPage from "../pages/TodoPage";
 import TodoDetailsPage from "../pages/TodoDetailsPage";
-import TestError from "../pages/TestError";
+import NotFound from "../pages/NotFound";
 
+// Define the root of the application with the persistent Layout
 const rootRoute = createRootRoute({
   component: Layout,
+  notFoundComponent: NotFound,
 });
 
-const todosRoute = createRoute({
+// Main Task List Route
+const tasksRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/tasks",
-  component: TodosPage,
+  path: "tasks",
+  component: TodoPage,
 });
 
-const todoDetailsRoute = createRoute({
-  getParentRoute: () => todosRoute,
+// Individual Task Detail Route (Nested)
+const taskDetailsRoute = createRoute({
+  getParentRoute: () => tasksRoute,
   path: "$id",
   component: TodoDetailsPage,
 });
 
-const testErrorRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/test-error",
-  component: TestError,
-});
-
+// Create the tree and the router instance
 const routeTree = rootRoute.addChildren([
-  todosRoute.addChildren([todoDetailsRoute]),
-  testErrorRoute,
+  tasksRoute.addChildren([taskDetailsRoute]),
 ]);
 
 export const router = createRouter({ routeTree });

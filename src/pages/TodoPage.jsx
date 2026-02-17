@@ -1,78 +1,123 @@
+// src/pages/TodoPage.jsx
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getTodos } from "../services/todo.service";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getTasks, updateTask, deleteTask } from "../services/todo.service";
 import { Link } from "@tanstack/react-router";
 
-export default function TodosPage() {
+export default function TodoPage() {
+  const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["tasks", page],
     queryFn: () => getTasks(page),
   });
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Something went wrong.</p>;
+  const deleteMutation = useMutation({
+    mutationFn: deleteTask,
+    onSuccess: () => queryClient.invalidateQueries(["tasks"]),
+  });
 
-  let todos = data?.data || [];
+  const toggleMutation = useMutation({
+    mutationFn: ({ id, completed }) =>
+      updateTask(id, { completed: !completed }),
+    onSuccess: () => queryClient.invalidateQueries(["tasks"]),
+  });
 
-  // Search
-  todos = tasks.filter((todo) =>
-    todo.title.toLowerCase().includes(search.toLowerCase()),
-  );
+  if (isLoading)
+    return <div className="p-10 text-center">Loading tasks...</div>;
 
-  // Filter
-  if (filter === "complete") {
-    todos = todos.filter((todo) => todo.completed);
-  }
+  const tasks = data?.data || [];
 
-  if (filter === "incomplete") {
-    todos = todos.filter((todo) => !todo.completed);
-  }
+  // Requirement: Search & Filtering
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch = task.title
+      .toLowerCase()
+      .includes(search.toLowerCase());
+    const matchesFilter =
+      statusFilter === "all"
+        ? true
+        : statusFilter === "complete"
+          ? task.completed
+          : !task.completed;
+    return matchesSearch && matchesFilter;
+  });
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Todos</h1>
+    <div className="max-w-4xl mx-auto p-6">
+      <header className="mb-8 flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-900">Task Dashboard</h1>
+      </header>
 
-      <input
-        type="text"
-        placeholder="Search todos..."
-        className="border p-2 mb-4 w-full"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-
-      <div className="mb-4 space-x-2">
-        <button onClick={() => setFilter("all")}>All</button>
-        <button onClick={() => setFilter("complete")}>Complete</button>
-        <button onClick={() => setFilter("incomplete")}>Incomplete</button>
+      {/* Controls Section */}
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Search by title..."
+          className="flex-1 p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-black outline-none"
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <select
+          className="p-3 border rounded-lg bg-white shadow-sm outline-none"
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          <option value="all">All Status</option>
+          <option value="complete">Completed</option>
+          <option value="incomplete">Incomplete</option>
+        </select>
       </div>
 
+      {/* Task List */}
       <div className="space-y-3">
-        {todos.map((todo) => (
-          <div key={todo.id} className="border p-4 rounded">
-            <h2 className="font-semibold">{todo.title}</h2>
-            <p>{todo.completed ? "Completed" : "Pending"}</p>
-
-            <Link
-              to="/todos/$id"
-              params={{ id: todo.id }}
-              className="text-blue-500"
-            >
-              View Details
-            </Link>
+        {filteredTasks.map((task) => (
+          <div
+            key={task.id}
+            className="flex items-center justify-between p-4 bg-white border rounded-xl shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center gap-4">
+              <input
+                type="checkbox"
+                checked={task.completed}
+                onChange={() => toggleMutation.mutate(task)}
+                className="w-5 h-5 accent-black"
+              />
+              <Link
+                to={`/tasks/${task.id}`}
+                className={`text-lg font-medium ${task.completed ? "line-through text-gray-400" : "text-gray-800"}`}
+              >
+                {task.title}
+              </Link>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => deleteMutation.mutate(task.id)}
+                className="text-red-500 hover:bg-red-50 p-2 rounded-lg"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="flex gap-4 mt-6">
-        <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-          Prev
+      {/* Requirement: Pagination */}
+      <div className="mt-10 flex justify-center items-center gap-6">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((p) => p - 1)}
+          className="px-6 py-2 border rounded-full hover:bg-gray-50 disabled:opacity-30"
+        >
+          Previous
         </button>
-
-        <button onClick={() => setPage(page + 1)}>Next</button>
+        <span className="font-semibold text-gray-600">Page {page}</span>
+        <button
+          onClick={() => setPage((p) => p + 1)}
+          className="px-6 py-2 border rounded-full hover:bg-gray-50"
+        >
+          Next
+        </button>
       </div>
     </div>
   );
