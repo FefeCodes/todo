@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "@tanstack/react-router";
 import { router } from "./app/router.jsx";
 import "./index.css";
-import "./index.css";
 import App from "./App.jsx";
 
 const queryClient = new QueryClient();

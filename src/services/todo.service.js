@@ -1,26 +1,26 @@
 import { api } from "./api";
 
-export const getTodos = async (page = 1) => {
-  const res = await api.get(`/todos?page=${page}&limit=10`);
+export const getTasks = async (page = 1) => {
+  const res = await api.get(`/tasks?page=${page}&limit=10`);
   return res.data;
 };
 
-export const getTodo = async (id) => {
-  const res = await api.get(`/todos/${id}`);
+export const getTask = async (id) => {
+  const res = await api.get(`/tasks/${id}`);
   return res.data;
 };
 
-export const createTodo = async (data) => {
-  const res = await api.post("/todos", data);
+export const createTask = async (data) => {
+  const res = await api.post("/tasks", data);
   return res.data;
 };
 
-export const updateTodo = async (id, data) => {
-  const res = await api.put(`/todos/${id}`, data);
+export const updateTask = async (id, data) => {
+  const res = await api.put(`/tasks/${id}`, data);
   return res.data;
 };
 
-export const deleteTodo = async (id) => {
-  const res = await api.delete(`/todos/${id}`);
+export const deleteTask = async (id) => {
+  const res = await api.delete(`/tasks/${id}`);
   return res.data;
 };

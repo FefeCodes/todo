@@ -4,11 +4,10 @@ import {
   createRouter,
 } from "@tanstack/react-router";
 
-import Layout from "./pages/Layout";
-import TodosPage from "./pages/TodosPage";
-import TodoDetailsPage from "./pages/TodoDetailsPage";
-import NotFound from "./pages/NotFound";
-import TestError from "./pages/TestError";
+import Layout from "../pages/Layout";
+import TodosPage from "../pages/TodoPage";
+import TodoDetailsPage from "../pages/TodoDetailsPage";
+import TestError from "../pages/TestError";
 
 const rootRoute = createRootRoute({
   component: Layout,
@@ -16,7 +15,7 @@ const rootRoute = createRootRoute({
 
 const todosRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/todos",
+  path: "/tasks",
   component: TodosPage,
 });
 

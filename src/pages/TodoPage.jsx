@@ -9,8 +9,8 @@ export default function TodosPage() {
   const [filter, setFilter] = useState("all");
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["todos", page],
-    queryFn: () => getTodos(page),
+    queryKey: ["tasks", page],
+    queryFn: () => getTasks(page),
   });
 
   if (isLoading) return <p>Loading...</p>;
@@ -19,7 +19,7 @@ export default function TodosPage() {
   let todos = data?.data || [];
 
   // Search
-  todos = todos.filter((todo) =>
+  todos = tasks.filter((todo) =>
     todo.title.toLowerCase().includes(search.toLowerCase()),
   );
 
