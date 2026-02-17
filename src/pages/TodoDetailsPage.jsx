@@ -1,4 +1,3 @@
-// src/pages/TodoDetailsPage.jsx
 import { useParams, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getTask } from "../services/todo.service";
@@ -24,7 +23,7 @@ export default function TodoDetailsPage() {
         to="/tasks"
         className="text-sm font-semibold text-gray-500 hover:text-black mb-6 block"
       >
-        ← BACK TO LIST
+        BACK TO LIST
       </Link>
 
       <h1 className="text-4xl font-extrabold text-gray-900 mb-4">

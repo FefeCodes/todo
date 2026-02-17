@@ -3,11 +3,10 @@ import { RouterProvider } from "@tanstack/react-router";
 import { router } from "./app/router";
 import "./index.css";
 
-// Create a client for TanStack Query to manage API state
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      staleTime: 1000 * 60 * 5,
       retry: 1,
     },
   },
@@ -15,9 +14,7 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    // QueryClientProvider allows all components to use useQuery and useMutation hooks
     <QueryClientProvider client={queryClient}>
-      {/* RouterProvider handles navigation and rendering based on your defined routes */}
       <RouterProvider router={router} />
     </QueryClientProvider>
   );

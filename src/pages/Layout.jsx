@@ -17,7 +17,6 @@ export default function Layout() {
       </nav>
 
       <main id="main-content">
-        {/* This is where TodoPage or TodoDetailsPage will render */}
         <Outlet />
       </main>
     </div>

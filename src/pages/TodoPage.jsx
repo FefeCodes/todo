@@ -1,4 +1,3 @@
-// src/pages/TodoPage.jsx
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getTasks, updateTask, deleteTask } from "../services/todo.service";
@@ -31,7 +30,6 @@ export default function TodoPage() {
 
   const tasks = data?.data || [];
 
-  // Requirement: Search & Filtering
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch = task.title
       .toLowerCase()
@@ -69,7 +67,6 @@ export default function TodoPage() {
         </select>
       </div>
 
-      {/* Task List */}
       <div className="space-y-3">
         {filteredTasks.map((task) => (
           <div
@@ -102,7 +99,6 @@ export default function TodoPage() {
         ))}
       </div>
 
-      {/* Requirement: Pagination */}
       <div className="mt-10 flex justify-center items-center gap-6">
         <button
           disabled={page === 1}
