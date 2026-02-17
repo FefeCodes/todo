@@ -31,7 +31,7 @@ export default function TodoPage() {
   const tasks = data?.data || [];
 
   const filteredTasks = tasks.filter((task) => {
-    const matchesSearch = task.title
+    const matchesSearch = (task?.title || "")
       .toLowerCase()
       .includes(search.toLowerCase());
     const matchesFilter =
